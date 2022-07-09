@@ -1,7 +1,7 @@
 <template>
   <Content>
     <div class="row">
-      <div class="col-3">
+      <div class="col-3 img-field">
         <UserProfileInfo :user="user" @followHandler="followHandler"></UserProfileInfo>
         <UserProfileWrite @post_a_post="post_a_post"></UserProfileWrite>
       </div>
@@ -13,13 +13,14 @@
 </template>
 
 <script>
-import { reactive, ref } from 'vue';
-import Content from '../components/Content'
-import UserProfileInfo from '../components/UserProfileInfo'
-import UserProfilePosts from '../components/UserProfilePosts'
-import UserProfileWrite from '../components/UserProfileWrite'
-import { useRoute } from 'vue-router';
-
+import { reactive, ref } from "vue";
+import Content from "../components/Content";
+import UserProfileInfo from "../components/UserProfileInfo";
+import UserProfilePosts from "../components/UserProfilePosts";
+import UserProfileWrite from "../components/UserProfileWrite";
+import { useRoute } from "vue-router";
+import $ from "jquery";
+import { useStore } from "vuex";
 
 export default {
   name: "UserProfileView",
@@ -28,65 +29,61 @@ export default {
     UserProfileInfo,
     UserProfilePosts,
     UserProfileWrite
-},
-  setup(){
+  },
+  setup() {
+    const store = useStore();
     const route = useRoute();
     const userId = route.params.userId;
+    const user = reactive({});
+    const posts = reactive({});
 
-
-    const user = reactive({
-      id: 1,
-      username: "tianluoding",
-      lastname: "Tian",
-      firstname: "Luoding",
-      followerCount: 0,
-      is_followed: false,
+    $.ajax({
+      url: "https://app165.acapp.acwing.com.cn/myspace/getinfo/",
+      type: "get",
+      data: {
+        user_id: userId
+      },
+      headers: {
+        Authorization: "Bearer " + store.state.user.access
+      },
+      success(resp) {
+        console.log(resp);
+        user.id = resp.id;
+        user.username = resp.username;
+        user.photo = resp.photo;
+        user.followerCount = resp.followerCount;
+        user.is_followed = resp.is_followed;
+      }
     });
 
-    const posts = reactive({
-      count: 3,
-      posts: [
-        {
-          id: 1,
-          userId:1,
-          content: "哈哈哈",
-        },
-        {
-          id: 2,
-          userId:1,
-          content: "哈哈哈11",
-        },
-        {
-          id: 3,
-          userId:1,
-          content: "哈哈哈222",
-        }
-      ]
-    })
-
-    const post_a_post = (content) => {
+    const post_a_post = content => {
       posts.count++;
       posts.posts.unshift({
         id: posts.count,
         userId: user.id,
-        content: content,
+        content: content
       });
-    }
+    };
 
     const followHandler = () => {
       user.is_followed = !user.is_followed;
       user.followerCount += user.is_followed ? 1 : -1;
     };
 
-    return{
+    return {
       user,
       followHandler,
       posts,
       post_a_post
-    }
+    };
   }
 };
 </script>
 
 <style scoped>
+.img-field{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 </style>

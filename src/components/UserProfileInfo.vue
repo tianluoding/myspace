@@ -2,11 +2,11 @@
   <div class="card">
     <div class="card-body">
       <div class="row">
-        <div class="col-3">
-          <img class="img-fluid" src="https://picsum.photos/360/460?random=1" alt />
+        <div class="col-3 img-field">
+          <img class="img-fluid" :src="user.photo" alt />
         </div>
         <div class="col-9">
-          <div class="username">{{fullName}}</div>
+          <div class="username">{{user.username}}</div>
           <div class="fans">粉丝: {{user.followerCount}}</div>
           <button v-if="!user.is_followed" @click="followHandler" type="button" class="btn btn-secondary btn-s">+关注</button>
           <button v-if="user.is_followed" @click="followHandler" type="button" class="btn btn-secondary btn-s">取消关注</button>
@@ -28,9 +28,7 @@ export default {
     }
   },
   setup(props, context) {
-    let fullName = computed(()=>
-        props.user.lastname + ' ' + props.user.firstname
-    );
+    
 
     const followHandler = () => {
         // props.user.is_followed = !props.user.is_followed;
@@ -39,7 +37,6 @@ export default {
     };
 
     return {
-        fullName,
         followHandler
     }
   }
@@ -66,4 +63,11 @@ button {
   padding: 2px 4px;
   font-size: 12px;
 }
+
+.img-field{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 </style>
