@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-3 img-field">
         <UserProfileInfo :user="user" @followHandler="followHandler"></UserProfileInfo>
-        <UserProfileWrite @post_a_post="post_a_post"></UserProfileWrite>
+        <UserProfileWrite v-if="is_me" @post_a_post="post_a_post"></UserProfileWrite>
       </div>
       <div class="col-9">
         <UserProfilePosts :posts="posts"></UserProfilePosts>
@@ -21,6 +21,7 @@ import UserProfileWrite from "../components/UserProfileWrite";
 import { useRoute } from "vue-router";
 import $ from "jquery";
 import { useStore } from "vuex";
+import { computed } from "vue";
 
 export default {
   name: "UserProfileView",
@@ -33,7 +34,7 @@ export default {
   setup() {
     const store = useStore();
     const route = useRoute();
-    const userId = route.params.userId;
+    const userId = parseInt(route.params.userId);
     const user = reactive({});
     const posts = reactive({});
 
@@ -56,6 +57,20 @@ export default {
       }
     });
 
+    $.ajax({
+      url: "https://app165.acapp.acwing.com.cn/myspace/post/",
+      type: "get",
+      data: {
+        user_id: userId
+      },
+      headers: {
+        Authorization: "Bearer " + store.state.user.access
+      },
+      success(resp) {
+        posts.posts = resp;
+      }
+    })
+
     const post_a_post = content => {
       posts.count++;
       posts.posts.unshift({
@@ -70,11 +85,14 @@ export default {
       user.followerCount += user.is_followed ? 1 : -1;
     };
 
+    const is_me = computed(() => userId === store.state.user.id);
+
     return {
       user,
       followHandler,
       posts,
-      post_a_post
+      post_a_post,
+      is_me
     };
   }
 };
