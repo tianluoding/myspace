@@ -43,7 +43,7 @@ export default {
           username: username.value,
           password: password.value,
           success() {
-            // console.log("login success");
+            console.log(store.state.user);
             router.push({name: "userlist"});
           },
           error() {

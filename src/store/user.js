@@ -25,6 +25,15 @@ const moduleUser = {
         },
         updateAccess(state, access) {
             state.access = access;
+        },
+        logout(state) {
+            state.id = "";
+            state.username = "";
+            state.photo = "";
+            state.followerCount = 0;
+            state.access = "";
+            state.refresh = "";
+            state.is_login = false;
         }
     },
     actions: {
@@ -53,7 +62,7 @@ const moduleUser = {
                         })
                     }, 4.5*60*1000);
                     $.ajax({
-                        url: "https://app165.acapp.acwing.com.cn/myspace/userlist/",
+                        url: "https://app165.acapp.acwing.com.cn/myspace/getinfo/",
                         type: "get",
                         data: {
                             user_id: access_obj.user_id,
