@@ -2,7 +2,7 @@
   <Content>
     <div class="row">
       <div class="col-3 img-field">
-        <UserProfileInfo :user="user" @followHandler="followHandler"></UserProfileInfo>
+        <UserProfileInfo :user="user" @followHandler="followHandler()"></UserProfileInfo>
         <UserProfileWrite v-if="is_me" @post_a_post="post_a_post"></UserProfileWrite>
       </div>
       <div class="col-9">
@@ -94,9 +94,23 @@ export default {
       });
     };
 
-    const followHandler = () => {
-      user.is_followed = !user.is_followed;
-      user.followerCount += user.is_followed ? 1 : -1;
+    const followHandler = (target_id) => {
+      $.ajax({
+        url: "https://app165.acapp.acwing.com.cn/myspace/follow/",
+        type: "post",
+        headers: {
+          Authorization: "Bearer " + store.state.user.access
+        },
+        data: {
+          target_id: target_id
+        },
+        success(resp) {
+          if (resp.result === "success") {
+            user.is_followed = !user.is_followed;
+            user.followerCount += user.is_followed ? 1 : -1;
+          }
+        }
+      });
     };
 
     const is_me = computed(() => userId === store.state.user.id);

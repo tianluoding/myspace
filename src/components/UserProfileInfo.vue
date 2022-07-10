@@ -8,8 +8,8 @@
         <div class="col-9">
           <div class="username">{{user.username}}</div>
           <div class="fans">粉丝: {{user.followerCount}}</div>
-          <button v-if="!user.is_followed" @click="followHandler" type="button" class="btn btn-secondary btn-s">+关注</button>
-          <button v-if="user.is_followed" @click="followHandler" type="button" class="btn btn-secondary btn-s">取消关注</button>
+          <button v-if="!user.is_followed" @click="followHandler(user.id)" type="button" class="btn btn-secondary btn-s">+关注</button>
+          <button v-if="user.is_followed" @click="followHandler(user.id)" type="button" class="btn btn-secondary btn-s">取消关注</button>
         </div>
       </div>
     </div>
@@ -30,10 +30,11 @@ export default {
   setup(props, context) {
     
 
-    const followHandler = () => {
+    const followHandler = (target_id) => {
         // props.user.is_followed = !props.user.is_followed;
         // props.user.followerCount += props.user.is_followed ? 1 : -1;
-        context.emit("followHandler");
+        console.log(target_id);
+        context.emit("followHandler", target_id);
     };
 
     return {
