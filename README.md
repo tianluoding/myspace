@@ -1,5 +1,13 @@
 # myspace
 
+vue3练习项目
+* 首页
+* 好友列表
+* 用户动态
+* 登录
+* 注册
+* 404
+
 ## Project setup
 ```
 npm install
