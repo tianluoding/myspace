@@ -6,7 +6,7 @@
         <UserProfileWrite v-if="is_me" @post_a_post="post_a_post"></UserProfileWrite>
       </div>
       <div class="col-9">
-        <UserProfilePosts :posts="posts"></UserProfilePosts>
+        <UserProfilePosts :posts="posts" :user="user"></UserProfilePosts>
       </div>
     </div>
   </Content>
@@ -69,14 +69,28 @@ export default {
       success(resp) {
         posts.posts = resp;
       }
-    })
+    });
 
     const post_a_post = content => {
-      posts.count++;
-      posts.posts.unshift({
-        id: posts.count,
-        userId: user.id,
-        content: content
+      $.ajax({
+        url: "https://app165.acapp.acwing.com.cn/myspace/post/",
+        type: "post",
+        headers: {
+          Authorization: "Bearer " + store.state.user.access
+        },
+        data: {
+          content: content
+        },
+        success(resp) {
+          if (resp.result === "success") {
+            posts.count++;
+            posts.posts.unshift({
+              id: posts.count,
+              userId: user.id,
+              content: content
+            });
+          }
+        }
       });
     };
 
@@ -99,7 +113,7 @@ export default {
 </script>
 
 <style scoped>
-.img-field{
+.img-field {
   display: flex;
   flex-direction: column;
   justify-content: center;
